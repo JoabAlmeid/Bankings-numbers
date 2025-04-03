@@ -81,9 +81,11 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
+//creates a new element on the index, inside the 'movements' container div. Takes the movements, runs through each and display each
 const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = '';
 
+  //in movs, if sort is true (if a > b), in movements, in a new array (slice), sort it ascendently, and if not, movs becomes movements (in case everything is already in order)
   const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
 
   movs.forEach(function (mov, i) {
@@ -95,8 +97,7 @@ const displayMovements = function (movements, sort = false) {
       i + 1
     } ${type}</div>
         <div class="movements__value">${mov}€</div>
-      </div>
-    `;
+      </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
@@ -129,34 +130,36 @@ const calcDisplaySummary = function (acc) {
   labelSumInterest.textContent = `${interest}€`;
 };
 
+//pega siglas do nome. Deixa tudo em minúsculo, divide em strings tudo entre os espaços, retorna a primeira letra, e depois junta tudo na mesma string. Feito um "side effect"(fazer algo e não retornar valor): todas as atuais accounts terão uma nova propriedade que são as siglas
 const createUsernames = function (accs) {
   accs.forEach(function (acc) {
     acc.username = acc.owner
-      .toLowerCase()
+      .toLocaleLowerCase()
       .split(' ')
-      .map(name => name[0])
+      .map(function (name) {
+        return name[0];
+      })
       .join('');
   });
 };
 createUsernames(accounts);
 
 const updateUI = function (acc) {
-  // Display movements
+  //Display movements
   displayMovements(acc.movements);
 
-  // Display balance
+  //Display balance
   calcDisplayBalance(acc);
 
-  // Display summary
+  //Display summary
   calcDisplaySummary(acc);
 };
 
-///////////////////////////////////////
-// Event handlers
+// Event Handler
 let currentAccount;
 
 btnLogin.addEventListener('click', function (e) {
-  // Prevent form from submitting
+  //prevents form from submitting
   e.preventDefault();
 
   currentAccount = accounts.find(
@@ -164,25 +167,27 @@ btnLogin.addEventListener('click', function (e) {
   );
   console.log(currentAccount);
 
-  if (currentAccount?.pin === Number(inputLoginPin.value)) {
-    // Display UI and message
+  //the interrogation is basically a "if exists" Without it, it would be currentAccount && currentAccount.pin [the rest]
+  if (currentAccount?.pin === +inputLoginPin.value) {
+    //Display UI and welcome message
+    //takes the full name, splits it into two divided right at where the space is, and use only the first division. And changes the HTML
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
     }`;
-    containerApp.style.opacity = 100;
+    containerApp.style.opacity = 1;
 
-    // Clear input fields
+    //Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
 
-    // Update UI
+    //UPDATE UI (use anywhere)
     updateUI(currentAccount);
   }
 });
 
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
-  const amount = Number(inputTransferAmount.value);
+  const amount = +inputTransferAmount.value;
   const receiverAcc = accounts.find(
     acc => acc.username === inputTransferTo.value
   );
@@ -194,11 +199,11 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.balance >= amount &&
     receiverAcc?.username !== currentAccount.username
   ) {
-    // Doing the transfer
+    //doing the transfering2
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
-    // Update UI
+    //UPDATE UI (use anywhere)
     updateUI(currentAccount);
   }
 });
@@ -206,13 +211,14 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = +inputLoanAmount.value;
 
+  //checks if the loan you are asking is greater than zero and if the current highest deposit is greater than 10% of the loan
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
+    //add movement
     currentAccount.movements.push(amount);
 
-    // Update UI
+    //update UI
     updateUI(currentAccount);
   }
   inputLoanAmount.value = '';
@@ -223,31 +229,63 @@ btnClose.addEventListener('click', function (e) {
 
   if (
     inputCloseUsername.value === currentAccount.username &&
-    Number(inputClosePin.value) === currentAccount.pin
+    +inputClosePin.value === currentAccount.pin
   ) {
+    //loops through array and finds the first index that corresponds to the condition
     const index = accounts.findIndex(
       acc => acc.username === currentAccount.username
     );
-    console.log(index);
-    // .indexOf(23)
 
-    // Delete account
+    //Deletes account
     accounts.splice(index, 1);
 
-    // Hide UI
+    //Hide UI
     containerApp.style.opacity = 0;
   }
-
   inputCloseUsername.value = inputClosePin.value = '';
 });
 
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
+  //!sorted makes it flip. If it was true, now it's false, and vice-versa
   displayMovements(currentAccount.movements, !sorted);
+  //this is what lets sorted be flipped. When the click happens, the opposite of false is called. If this didn't exist, it would always be true after the click, because the let never changes. But now, it changes the let, ready to be clicked again
   sorted = !sorted;
 });
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+//CONVERSTING AND CHECKING NUMBERS
+//JS se baseia em Base 10 e binário
+//Base 10 onde todos os números vao de 0 a 9 apenas. Então 1/10 = 0.1 e 3/10 = 3.3333333
+console.log(23 === 23.0);
+console.log(0.1 + 0.2);
+console.log(0.1 + 0.2 === 0.3);
+
+// Conversion
+console.log(Number('23'));
+console.log(+'23');
+
+// Parsing
+//bom colocar o número 10 para dizer "base 10" e evitar bugs. Se colocar "2", a função fica binária (não sei o que significa)
+console.log(Number.parseInt('30px', 10));
+console.log(Number.parseInt('p30', 10));
+
+console.log(Number.parseInt('2.5rem'));
+console.log(Number.parseFloat('2.5rem'));
+
+//you can do it like that, but it's not incentivized
+//console.log(parseFloat('2.5rem'));
+
+console.log(Number.isNaN(20));
+console.log(Number.isNaN(+'20X'));
+console.log(Number.isNaN(23 / 0));
+
+//is Finite is the BEST WAY TO CHECK IF THE VALUE IS A NUMBER
+console.log(Number.isFinite(20));
+console.log(Number.isFinite('20'));
+console.log(Number.isFinite(+'20X'));
+console.log(Number.isFinite(23 / 0));
