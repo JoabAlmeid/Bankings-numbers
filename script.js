@@ -293,6 +293,8 @@ console.log(Number.isFinite(+'20X'));
 console.log(Number.isFinite(23 / 0));
 */
 
+/*
+
 console.log(Math.sqrt(25));
 console.log(25 ** (1 / 2));
 console.log(8 ** (1 / 3));
@@ -338,3 +340,32 @@ console.log((2.7).toFixed(0));
 console.log((2.7).toFixed(3));
 console.log((2.345).toFixed(2));
 console.log(+(2.345).toFixed(2));
+
+*/
+
+// REMAINDER
+//used to check the reaminder after a division, useful to see if a number is even/completely divisible
+
+console.log(5 % 2); // 5 = 2 * 2 + 1(remainder)
+console.log(5 / 2);
+
+console.log(8 % 3); // 8 = 3 * 2 + 2(remainder)
+console.log(8 / 3);
+
+console.log(6 % 2); // 6 = 2 * 3 + 0(remainder)
+console.log(6 / 2);
+
+console.log(7 % 2); // 7 = 2 * 3 + 1(remainder)
+console.log(7 / 2);
+
+const isEven = n => n % 2 === 0;
+console.log(isEven(8));
+console.log(isEven(23));
+console.log(isEven(514));
+
+labelBalance.addEventListener('click', function () {
+  [...document.querySelectorAll('.movements__row')].forEach(function (row, i) {
+    if (i % 2 === 0) row.style.backgroundColor = 'orangered'; //0, 2, 4, 6... mudarão de cor
+    if (i % 3 === 0) row.style.backgroundColor = 'blue'; //0, 3, 6, 9 mudarão de cor
+  });
+});
