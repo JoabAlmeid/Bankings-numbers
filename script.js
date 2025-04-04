@@ -343,6 +343,8 @@ console.log(+(2.345).toFixed(2));
 
 */
 
+/*
+
 // REMAINDER
 //used to check the reaminder after a division, useful to see if a number is even/completely divisible
 
@@ -369,3 +371,26 @@ labelBalance.addEventListener('click', function () {
     if (i % 3 === 0) row.style.backgroundColor = 'blue'; //0, 3, 6, 9 mudarão de cor
   });
 });
+
+*/
+
+//NUMERIC SEPARATOR
+
+// 287,460,000,000
+const diameter = 287_460_000_000;
+console.log(diameter);
+
+const price = 345_99;
+console.log(price);
+
+const transferFee1 = 15_00;
+const transferFee2 = 1_500;
+
+//não pode colocar underscore depois de um . ou no começo/final do número
+const PI = 3.14_15;
+console.log(PI);
+
+//apenas use o underscore no código para números. Se colocar em uma string, ele não reconhece mais como número
+console.log(Number('230_000'));
+//ele pega apenas os números de antes do underscore
+console.log(parseInt('230_000'));
