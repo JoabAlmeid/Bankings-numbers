@@ -386,7 +386,7 @@ console.log(price);
 const transferFee1 = 15_00;
 const transferFee2 = 1_500;
 
-//não pode colocar underscore depois de um . ou no começo/final do número
+//não pode colocar underscore depois de um "." ou no começo/final do número
 const PI = 3.14_15;
 console.log(PI);
 
