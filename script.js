@@ -374,6 +374,8 @@ labelBalance.addEventListener('click', function () {
 
 */
 
+/*
+
 //NUMERIC SEPARATOR
 
 // 287,460,000,000
@@ -394,3 +396,45 @@ console.log(PI);
 console.log(Number('230_000'));
 //ele pega apenas os números de antes do underscor
 console.log(parseInt('230_000'));
+
+*/
+
+// BIG INT
+//this is the biggest number JS can produce with int
+console.log(2 ** 53 - 1);
+console.log(Number.MAX_SAFE_INTEGER);
+//it should had summed with 53, but it doesn't. It starts to be inconsistent past this
+//it becomes "unsafe"
+console.log(2 ** 53 + 1);
+console.log(2 ** 53 + 2);
+console.log(2 ** 53 + 3);
+console.log(2 ** 53 + 4);
+
+//to go past this, you put an n and make it a big int
+console.log(3267412896423876421746237121467n);
+console.log(BigInt(32674128964237));
+
+//Operations
+console.log(10000n + 10000n);
+console.log(3267412896423876421746237121467n + 1000001n);
+
+//bigInts don't operate with ints, you need to concate
+const huge = 1242142342352332n;
+const num = 23;
+console.log(huge * BigInt(num));
+
+//Exceptions
+console.log(20n > 15);
+console.log(20n === 20);
+console.log(typeof 20n);
+console.log(20n == 20);
+console.log(20n == '20');
+//we cannot take the square root of bigInt
+//console.log(Math.sqrt(16n));
+
+console.log(huge + ' is REALLY big!!!');
+
+//Divisions
+//returns the closest big int, not decimals
+console.log(10n / 3n);
+console.log(10 / 3);
