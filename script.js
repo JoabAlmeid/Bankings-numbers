@@ -392,5 +392,5 @@ console.log(PI);
 
 //apenas use o underscore no código para números. Se colocar em uma string, ele não reconhece mais como número
 console.log(Number('230_000'));
-//ele pega apenas os números de antes do underscore
+//ele pega apenas os números de antes do underscor
 console.log(parseInt('230_000'));
