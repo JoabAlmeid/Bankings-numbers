@@ -82,20 +82,29 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // Functions
 
 //creates a new element on the index, inside the 'movements' container div. Takes the movements, runs through each and display each
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
   //in movs, if sort is true (if a > b), in movements, in a new array (slice), sort it ascendently, and if not, movs becomes movements (in case everything is already in order)
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+
+    const date = new Date(acc.movementsDates[i]);
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    const year = date.getFullYear();
+    const displayDate = `${day}/${month}/${year}`;
 
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
+        <div class="movements__date">${displayDate}</div>
         <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>`;
 
@@ -146,7 +155,7 @@ createUsernames(accounts);
 
 const updateUI = function (acc) {
   //Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   //Display balance
   calcDisplayBalance(acc);
@@ -157,6 +166,13 @@ const updateUI = function (acc) {
 
 // Event Handler
 let currentAccount;
+
+// FAKE ALWAYS LOGGED IN
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 1;
+
+// dia/mês/ano
 
 btnLogin.addEventListener('click', function (e) {
   //prevents form from submitting
@@ -175,6 +191,15 @@ btnLogin.addEventListener('click', function (e) {
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 1;
+
+    //Create current date
+    const now = new Date();
+    const day = `${now.getDate()}`.padStart(2, 0);
+    const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    const year = now.getFullYear();
+    const hour = `${now.getHours()}`.padStart(2, 0);
+    const min = `${now.getMinutes()}`.padStart(2, 0);
+    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
 
     //Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
@@ -199,9 +224,13 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.balance >= amount &&
     receiverAcc?.username !== currentAccount.username
   ) {
-    //doing the transfering2
+    //doing the transfering
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
+
+    //add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
 
     //UPDATE UI (use anywhere)
     updateUI(currentAccount);
@@ -217,6 +246,9 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     //add movement
     currentAccount.movements.push(amount);
+
+    //add loan date
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     //update UI
     updateUI(currentAccount);
@@ -249,7 +281,7 @@ let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
   //!sorted makes it flip. If it was true, now it's false, and vice-versa
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   //this is what lets sorted be flipped. When the click happens, the opposite of false is called. If this didn't exist, it would always be true after the click, because the let never changes. But now, it changes the let, ready to be clicked again
   sorted = !sorted;
 });
@@ -460,6 +492,7 @@ console.log(new Date(0));
 console.log(new Date(3 * 24 * 60 * 60 * 1000));
 
 */
+/*
 
 // WORKING WITH DATES
 const future = new Date(2037, 10, 19, 15, 23);
@@ -482,3 +515,4 @@ console.log(Date.now());
 
 future.setFullYear(2040);
 console.log(future);
+*/
