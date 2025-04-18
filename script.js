@@ -85,15 +85,24 @@ const inputClosePin = document.querySelector('.form__input--pin');
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
-  //in movs, if sort is true (if a > b), in movements, in a new array (slice), sort it ascendently, and if not, movs becomes movements (in case everything is already in order)
-  const movs = sort
-    ? acc.movements.slice().sort((a, b) => a - b)
-    : acc.movements;
+  //this creates a new data structure (an array of objects) and is the same thing as => {return mov; return acc.movementsDates.at(i)}
+  const combinedMovsDates = acc.movements.map((mov, i) => ({
+    movement: mov,
+    movementDate: acc.movementsDates.at(i),
+  }));
 
-  movs.forEach(function (mov, i) {
-    const type = mov > 0 ? 'deposit' : 'withdrawal';
+  if (sort) combinedMovsDates.sort((a, b) => a.movement - b.movement);
 
-    const date = new Date(acc.movementsDates[i]);
+  combinedMovsDates.forEach(function (obj, i) {
+    //destructuring obj to put it's values on those two variables
+    const { movement, movementDate } = obj;
+    const type = movement > 0 ? 'deposit' : 'withdrawal';
+
+    const date = new Date(movementDate);
+    // const displayDate = formatMovementDate(date, acc.locale);
+    // const formattedMov = formatCur(movement, acc.locale, acc.currency);
+
+    //forma antiga e mais simples de fazer o que está acima
     const day = `${date.getDate()}`.padStart(2, 0);
     const month = `${date.getMonth() + 1}`.padStart(2, 0);
     const year = date.getFullYear();
@@ -105,7 +114,7 @@ const displayMovements = function (acc, sort = false) {
       i + 1
     } ${type}</div>
         <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__value">${movement.toFixed(2)}€</div>
       </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
