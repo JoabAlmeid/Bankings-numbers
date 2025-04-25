@@ -196,13 +196,43 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+
+    // IN EACH CALL, PRINT THE REMAINING TIME TO UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    // WHEN 0 SECONDS, STOP TIMET AND LOG OUT
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get Started';
+      containerApp.style.opacity = 0;
+    }
+
+    // DECREASE 1s
+    time--;
+  };
+
+  // SET TIME TO 5 MINUTES
+  let time = 30;
+
+  // CALL THE TIMER EVERY SECOND
+  tick();
+  const timer = setInterval(tick, 1000);
+
+  return timer;
+};
+
+/////////////////////////////////////////////
 // Event Handler
-let currentAccount;
+let currentAccount, timer;
 
 // FAKE ALWAYS LOGGED IN
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 1;
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 1;
 
 btnLogin.addEventListener('click', function (e) {
   //prevents form from submitting
@@ -250,6 +280,9 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
 
+    if (timer) clearInterval(timer);
+
+    timer = startLogOutTimer();
     //UPDATE UI (use anywhere)
     updateUI(currentAccount);
   }
@@ -279,6 +312,10 @@ btnTransfer.addEventListener('click', function (e) {
 
     //UPDATE UI (use anywhere)
     updateUI(currentAccount);
+
+    //RESET THE TIMER
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -298,6 +335,10 @@ btnLoan.addEventListener('click', function (e) {
 
       //update UI
       updateUI(currentAccount);
+
+      //RESET THE TIMER
+      clearInterval(timer);
+      timer = startLogOutTimer();
     }, 2500);
   }
   inputLoanAmount.value = '';
@@ -600,6 +641,8 @@ console.log(
 
 //setTimeout
 
+/*
+
 const ingredients = ['olives', 'spinach'];
 const pizzaTimer = setTimeout(
   (ing1, ing2) => console.log(`Here is your pizza with ${ing1} and ${ing2}`),
@@ -615,3 +658,4 @@ setInterval(function () {
   const now = new Date();
   console.log(now);
 }, 3000);
+*/
