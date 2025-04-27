@@ -330,7 +330,7 @@ btnLoan.addEventListener('click', function (e) {
       //add movement
       currentAccount.movements.push(amount);
 
-      //add loan date
+      //add loan dates
       currentAccount.movementsDates.push(new Date().toISOString());
 
       //update UI
